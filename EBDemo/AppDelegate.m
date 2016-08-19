@@ -14,9 +14,15 @@
 
 @implementation AppDelegate
 
+-(void) requestLocationAuth
+{
+    CLLocationManager *locationManager = [[CLLocationManager alloc] init];
+    [locationManager requestAlwaysAuthorization];
+    [locationManager requestWhenInUseAuthorization];
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    [self requestLocationAuth];
     return YES;
 }
 
