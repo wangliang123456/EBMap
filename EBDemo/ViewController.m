@@ -19,6 +19,7 @@
     UIButton *currentLocationBtn;
     CLLocationManager *locationManager;
     CLLocation *currentLotion;
+    UITableView *searchResultView;
 }
 
 #pragma mark init the view
@@ -35,6 +36,7 @@
     NSLayoutConstraint *centerY = [NSLayoutConstraint constraintWithItem:mapView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
     [self.view addConstraints:@[width,height,centerX,centerY]];
     mapView.showsUserLocation = YES;
+    mapView.zoomEnabled = YES;
     
     searchField = [[UITextField alloc] initWithFrame:CGRectZero];
     searchField.delegate = self;
