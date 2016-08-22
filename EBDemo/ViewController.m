@@ -28,14 +28,13 @@
     mapView = [[MKMapView alloc] initWithFrame:CGRectZero];
     mapView.translatesAutoresizingMaskIntoConstraints = NO;
     mapView.mapType = MKMapTypeStandard;
-    mapView.showsCompass = YES;
-    mapView.showsUserLocation = YES;
     [self.view addSubview:mapView];
     NSLayoutConstraint *width = [NSLayoutConstraint constraintWithItem:mapView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0];
     NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:mapView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeHeight multiplier:1.0 constant:0];
     NSLayoutConstraint *centerX = [NSLayoutConstraint constraintWithItem:mapView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0];
     NSLayoutConstraint *centerY = [NSLayoutConstraint constraintWithItem:mapView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
     [self.view addConstraints:@[width,height,centerX,centerY]];
+    mapView.showsUserLocation = YES;
     
     searchField = [[UITextField alloc] initWithFrame:CGRectZero];
     searchField.delegate = self;
@@ -76,6 +75,8 @@
 {
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    locationManager.distanceFilter = 1000.0f;
     [locationManager requestAlwaysAuthorization];
     [locationManager requestWhenInUseAuthorization];
     [locationManager startUpdatingLocation];
@@ -84,7 +85,7 @@
 #pragma mark show current location
 -(void) showCurrentLocation:(id) sender
 {
-    
+    mapView.showsUserLocation = YES;
 }
 
 - (void)viewDidLoad
@@ -131,19 +132,6 @@
            fromLocation:(CLLocation *)oldLocation
 {
     currentLotion = newLocation;
-//    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(newLocation.coordinate,1000 ,1000);
-//    [mapView setRegion:region animated:YES];
-    CLLocationCoordinate2D userLocation;
-    CLLocationDegrees latitude = newLocation.coordinate.latitude;
-    CLLocationDegrees longtitude = newLocation.coordinate.longitude;
-    userLocation.latitude = latitude;
-    userLocation.longitude = longtitude;
-    [mapView setCenterCoordinate:userLocation];
-    MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
-    annotation.subtitle = @"subtitle";
-    annotation.title = @"title";
-    [mapView showAnnotations:@[annotation] animated:YES];
-    
-    
+    NSLog(@"current location is %@",currentLotion);
 }
 @end
