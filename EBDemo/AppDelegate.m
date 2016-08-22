@@ -22,7 +22,6 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [self requestLocationAuth];
     return YES;
 }
 

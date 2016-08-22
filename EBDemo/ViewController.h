@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 @import MapKit;
 
-@interface ViewController : UIViewController<UITextFieldDelegate>
+@interface ViewController : UIViewController<UITextFieldDelegate,CLLocationManagerDelegate>
 
 
 @end
