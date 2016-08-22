@@ -16,8 +16,9 @@
 {
     MKMapView *mapView;
     UITextField *searchField;
-    UIButton *currentLocation;
+    UIButton *currentLocationBtn;
     CLLocationManager *locationManager;
+    CLLocation *currentLotion;
 }
 
 #pragma mark init the view
@@ -51,22 +52,22 @@
     NSLayoutConstraint *searchFieldHeight = [NSLayoutConstraint constraintWithItem:searchField attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:40];
     [self.view addConstraints:@[searchFieldCenterX,searchFieldTop,searchFieldWidth,searchFieldHeight]];
     
-    currentLocation = [[UIButton alloc] initWithFrame:CGRectZero];
-    currentLocation.translatesAutoresizingMaskIntoConstraints = NO;
-    currentLocation.layer.cornerRadius = 50 / 2;
-    currentLocation.backgroundColor = [UIColor whiteColor];
-    currentLocation.titleLabel.font = [UIFont systemFontOfSize:12];
-    currentLocation.titleLabel.textColor = [UIColor blackColor];
-    [currentLocation setTitle:@"当前位置" forState:UIControlStateNormal];
-    [currentLocation setTitle:@"当前位置" forState:UIControlStateHighlighted];
-    [currentLocation setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [currentLocation setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
-    [currentLocation addTarget:self action:@selector(showCurrentLocation:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:currentLocation];
-    NSLayoutConstraint *currentLocationWidth = [NSLayoutConstraint constraintWithItem:currentLocation attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:50];
-    NSLayoutConstraint *currentLocationHeight = [NSLayoutConstraint constraintWithItem:currentLocation attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:50];
-    NSLayoutConstraint *currentLocationBottom = [NSLayoutConstraint constraintWithItem:currentLocation attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-50];
-    NSLayoutConstraint *currentLocationTrailing = [NSLayoutConstraint constraintWithItem:currentLocation attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-50];
+    currentLocationBtn = [[UIButton alloc] initWithFrame:CGRectZero];
+    currentLocationBtn.translatesAutoresizingMaskIntoConstraints = NO;
+    currentLocationBtn.layer.cornerRadius = 50 / 2;
+    currentLocationBtn.backgroundColor = [UIColor whiteColor];
+    currentLocationBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+    currentLocationBtn.titleLabel.textColor = [UIColor blackColor];
+    [currentLocationBtn setTitle:@"当前位置" forState:UIControlStateNormal];
+    [currentLocationBtn setTitle:@"当前位置" forState:UIControlStateHighlighted];
+    [currentLocationBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [currentLocationBtn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+    [currentLocationBtn addTarget:self action:@selector(showCurrentLocation:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:currentLocationBtn];
+    NSLayoutConstraint *currentLocationWidth = [NSLayoutConstraint constraintWithItem:currentLocationBtn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:50];
+    NSLayoutConstraint *currentLocationHeight = [NSLayoutConstraint constraintWithItem:currentLocationBtn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:50];
+    NSLayoutConstraint *currentLocationBottom = [NSLayoutConstraint constraintWithItem:currentLocationBtn attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-50];
+    NSLayoutConstraint *currentLocationTrailing = [NSLayoutConstraint constraintWithItem:currentLocationBtn attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-50];
     [self.view addConstraints:@[currentLocationWidth,currentLocationBottom,currentLocationHeight,currentLocationTrailing]];
 }
 
@@ -129,16 +130,20 @@
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
 {
+    currentLotion = newLocation;
 //    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(newLocation.coordinate,1000 ,1000);
 //    [mapView setRegion:region animated:YES];
     CLLocationCoordinate2D userLocation;
-    CLLocationDegrees latitude = 115.25;
-    CLLocationDegrees longtitude = 50.26;
+    CLLocationDegrees latitude = newLocation.coordinate.latitude;
+    CLLocationDegrees longtitude = newLocation.coordinate.longitude;
     userLocation.latitude = latitude;
     userLocation.longitude = longtitude;
+    [mapView setCenterCoordinate:userLocation];
     MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
     annotation.subtitle = @"subtitle";
     annotation.title = @"title";
     [mapView showAnnotations:@[annotation] animated:YES];
+    
+    
 }
 @end
