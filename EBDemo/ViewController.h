@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AFURLSessionManager.h"
+
 @import MapKit;
 
 @interface ViewController : UIViewController<UITextFieldDelegate,CLLocationManagerDelegate>
