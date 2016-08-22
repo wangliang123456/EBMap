@@ -101,16 +101,18 @@
 #pragma mark text field delegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [self getSearchResult];
+    [self getSearchResult:textField.text];
     return YES;
 }
 
--(void) getSearchResult
+#pragma mark get the location info
+-(void) getSearchResult:(NSString *) locationText
 {
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
-    
-    NSURL *URL = [NSURL URLWithString:@"http://httpbin.org/get"];
+    NSString *str = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/geocode/json?address=%@&key=AIzaSyC6RiLj9o2Uv6DMThdyCkU597r9wVVilSc",locationText];
+    str = [str stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL *URL = [NSURL URLWithString:str];
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     NSURLSessionDataTask *dataTask = [manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
         if (error) {
