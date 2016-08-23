@@ -22,6 +22,7 @@
     UITableView *autoCompleteTableView;
     NSMutableArray *predictions;
     NSUInteger selectedIndex;
+    UITableView *resultTableView;
 }
 
 #pragma mark init the view
@@ -153,19 +154,33 @@
 #pragma mark table view data source
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return predictions.count;
+    if (tableView == autoCompleteTableView) {
+        return predictions.count;
+    } else {
+        return 5;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *identifer = @"cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifer];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifer];
+    if (tableView == autoCompleteTableView) {
+        static NSString *identifer = @"autoconmpletecell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifer];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifer];
+        }
+        NSDictionary *dict = [predictions objectAtIndex:indexPath.row];
+        cell.textLabel.text = [dict valueForKey:@"description"];
+        return cell;
+    } else {
+        static NSString *identifer = @"resultcell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifer];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifer];
+        }
+        cell.textLabel.text = @"dskahdkjsahdkjsahkdjshakjdhsa";
+        return cell;
     }
-    NSDictionary *dict = [predictions objectAtIndex:indexPath.row];
-    cell.textLabel.text = [dict valueForKey:@"description"];
-    return cell;
 }
 
 #pragma mark table view delegate
@@ -193,11 +208,17 @@
     } downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
         
     } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
-        if (error) {
-            NSLog(@"error is %@",error);
-        } else {
-            NSLog(@"%@",responseObject);
-        }
+        [autoCompleteTableView removeFromSuperview];
+        resultTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        [self.view addSubview:resultTableView];
+        resultTableView.translatesAutoresizingMaskIntoConstraints = NO;
+        resultTableView.delegate = self;
+        resultTableView.dataSource = self;
+        NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:resultTableView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
+        NSLayoutConstraint *leading = [NSLayoutConstraint constraintWithItem:resultTableView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
+        NSLayoutConstraint *width = [NSLayoutConstraint constraintWithItem:resultTableView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0];
+        NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:resultTableView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:200];
+        [self.view addConstraints:@[bottom,leading,width,height]];
     }];
     [dataTask resume];
 }
