@@ -180,6 +180,7 @@
     [self getPlaceDetail:place_id];
 }
 
+#pragma mark get place detail
 -(void) getPlaceDetail:(NSString *)place_id {
     NSString *locationDetailApi = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/details/json?key=AIzaSyC3_TyXqumwHJ3sLlLHoRAab7A87eKF_C8&placeid=%@",place_id];
     ;
