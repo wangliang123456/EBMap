@@ -11,7 +11,7 @@
 
 @import MapKit;
 
-@interface ViewController : UIViewController<UITextFieldDelegate,CLLocationManagerDelegate>
+@interface ViewController : UIViewController<UITextFieldDelegate,CLLocationManagerDelegate,UITableViewDelegate,UITableViewDataSource>
 
 
 @end

@@ -19,7 +19,8 @@
     UIButton *currentLocationBtn;
     CLLocationManager *locationManager;
     CLLocation *currentLotion;
-    UITableView *searchResultView;
+    UITableView *autoCompleteTableView;
+    NSMutableArray *predictions;
 }
 
 #pragma mark init the view
@@ -59,8 +60,8 @@
     currentLocationBtn.backgroundColor = [UIColor whiteColor];
     currentLocationBtn.titleLabel.font = [UIFont systemFontOfSize:12];
     currentLocationBtn.titleLabel.textColor = [UIColor blackColor];
-    [currentLocationBtn setTitle:@"当前位置" forState:UIControlStateNormal];
-    [currentLocationBtn setTitle:@"当前位置" forState:UIControlStateHighlighted];
+    [currentLocationBtn setTitle:@"当前" forState:UIControlStateNormal];
+    [currentLocationBtn setTitle:@"当前" forState:UIControlStateHighlighted];
     [currentLocationBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [currentLocationBtn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
     [currentLocationBtn addTarget:self action:@selector(showCurrentLocation:) forControlEvents:UIControlEventTouchUpInside];
@@ -82,6 +83,7 @@
     [locationManager requestAlwaysAuthorization];
     [locationManager requestWhenInUseAuthorization];
     [locationManager startUpdatingLocation];
+    predictions = [NSMutableArray array];
 }
 
 #pragma mark show current location
@@ -105,6 +107,7 @@
 #pragma mark text field delegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+    [textField resignFirstResponder];
     [self getSearchResult:textField.text];
     return YES;
 }
@@ -112,20 +115,63 @@
 #pragma mark get the location info
 -(void) getSearchResult:(NSString *) locationText
 {
+    NSString *autoCompleteApi = @"https://maps.googleapis.com/maps/api/place/autocomplete/json?types=geocode&key=AIzaSyC3_TyXqumwHJ3sLlLHoRAab7A87eKF_C8";
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    autoCompleteApi = [autoCompleteApi stringByAppendingFormat:@"&input=%@",locationText];
     AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
-    NSString *str = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/geocode/json?address=%@&key=AIzaSyC6RiLj9o2Uv6DMThdyCkU597r9wVVilSc",locationText];
-    str = [str stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL *URL = [NSURL URLWithString:str];
+    NSURL *URL = [NSURL URLWithString:autoCompleteApi];
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     NSURLSessionDataTask *dataTask = [manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
         if (error) {
             NSLog(@"Error: %@", error);
         } else {
-            NSLog(@"%@ %@", response, responseObject);
+            if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                NSString *status = [responseObject valueForKey:@"status"];
+                if ([status isEqualToString:@"OK"]) {
+                    [predictions removeAllObjects];
+                    NSArray *localPredictions = [responseObject objectForKey:@"predictions"];
+                    [predictions addObjectsFromArray:localPredictions];
+                    autoCompleteTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+                    autoCompleteTableView.translatesAutoresizingMaskIntoConstraints = NO;
+                    autoCompleteTableView.delegate = self;
+                    autoCompleteTableView.dataSource = self;
+                    [self.view addSubview:autoCompleteTableView];
+                    NSLayoutConstraint *autoCompleteTableViewTop = [NSLayoutConstraint constraintWithItem:autoCompleteTableView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:searchField attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
+                    NSLayoutConstraint *autoCompleteTableViewLeading = [NSLayoutConstraint constraintWithItem:autoCompleteTableView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:searchField attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
+                    NSLayoutConstraint *autoCompleteTableViewWidth = [NSLayoutConstraint constraintWithItem:autoCompleteTableView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:searchField attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0];
+                    NSLayoutConstraint *autoCompleteTableViewHeight = [NSLayoutConstraint constraintWithItem:autoCompleteTableView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:200];
+                    [self.view addConstraints:@[autoCompleteTableViewTop,autoCompleteTableViewLeading,autoCompleteTableViewWidth,autoCompleteTableViewHeight]];
+                }
+            }
         }
     }];
     [dataTask resume];
+}
+
+#pragma mark table view data source
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return predictions.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *identifer = @"cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifer];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifer];
+    }
+    NSDictionary *dict = [predictions objectAtIndex:indexPath.row];
+    cell.textLabel.text = [dict valueForKey:@"description"];
+    return cell;
+}
+
+#pragma mark table view delegate
+-(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+    searchField.text = selectedCell.textLabel.text;
+    [tableView removeFromSuperview];
 }
 
 #pragma mark location delegate
@@ -134,6 +180,5 @@
            fromLocation:(CLLocation *)oldLocation
 {
     currentLotion = newLocation;
-    NSLog(@"current location is %@",currentLotion);
 }
 @end
