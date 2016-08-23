@@ -120,6 +120,7 @@
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     autoCompleteApi = [autoCompleteApi stringByAppendingFormat:@"&input=%@",locationText];
     AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
+    autoCompleteApi = [autoCompleteApi stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL *URL = [NSURL URLWithString:autoCompleteApi];
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     NSURLSessionDataTask *dataTask = [manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
@@ -174,6 +175,30 @@
     searchField.text = selectedCell.textLabel.text;
     [tableView removeFromSuperview];
     selectedIndex = indexPath.row;
+    NSDictionary *dict = [predictions objectAtIndex:selectedIndex];
+    NSString *place_id = [dict valueForKey:@"place_id"];
+    [self getPlaceDetail:place_id];
+}
+
+-(void) getPlaceDetail:(NSString *)place_id {
+    NSString *locationDetailApi = [NSString stringWithFormat:@"https://maps.googleapis.com/maps/api/place/details/json?key=AIzaSyC3_TyXqumwHJ3sLlLHoRAab7A87eKF_C8&placeid=%@",place_id];
+    ;
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
+    NSURL *URL = [NSURL URLWithString:locationDetailApi];
+    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+    NSURLSessionDataTask * dataTask = [manager dataTaskWithRequest:request uploadProgress:^(NSProgress * _Nonnull uploadProgress) {
+        
+    } downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
+        
+    } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"error is %@",error);
+        } else {
+            NSLog(@"%@",responseObject);
+        }
+    }];
+    [dataTask resume];
 }
 
 #pragma mark location delegate
