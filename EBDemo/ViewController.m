@@ -179,6 +179,7 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifer];
         }
         cell.textLabel.text = @"dskahdkjsahdkjsahkdjshakjdhsa";
+        cell.textLabel.textColor = [UIColor yellowColor];
         return cell;
     }
 }
@@ -186,13 +187,17 @@
 #pragma mark table view delegate
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
-    searchField.text = selectedCell.textLabel.text;
-    [tableView removeFromSuperview];
-    selectedIndex = indexPath.row;
-    NSDictionary *dict = [predictions objectAtIndex:selectedIndex];
-    NSString *place_id = [dict valueForKey:@"place_id"];
-    [self getPlaceDetail:place_id];
+    if (tableView == autoCompleteTableView) {
+        UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
+        searchField.text = selectedCell.textLabel.text;
+        [tableView removeFromSuperview];
+        selectedIndex = indexPath.row;
+        NSDictionary *dict = [predictions objectAtIndex:selectedIndex];
+        NSString *place_id = [dict valueForKey:@"place_id"];
+        [self getPlaceDetail:place_id];
+    } else {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    }
 }
 
 #pragma mark get place detail
