@@ -21,6 +21,7 @@
     CLLocation *currentLotion;
     UITableView *autoCompleteTableView;
     NSMutableArray *predictions;
+    NSUInteger selectedIndex;
 }
 
 #pragma mark init the view
@@ -172,6 +173,7 @@
     UITableViewCell *selectedCell = [tableView cellForRowAtIndexPath:indexPath];
     searchField.text = selectedCell.textLabel.text;
     [tableView removeFromSuperview];
+    selectedIndex = indexPath.row;
 }
 
 #pragma mark location delegate
