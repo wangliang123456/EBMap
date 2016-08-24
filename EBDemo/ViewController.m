@@ -23,6 +23,7 @@
     NSMutableArray *predictions;
     NSUInteger selectedIndex;
     UITableView *resultTableView;
+    UIScreen *screen;
 }
 
 #pragma mark init the view
@@ -51,7 +52,7 @@
     searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
     NSLayoutConstraint *searchFieldCenterX = [NSLayoutConstraint constraintWithItem:searchField attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0];
     NSLayoutConstraint *searchFieldTop = [NSLayoutConstraint constraintWithItem:searchField attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1.0 constant:26];
-    UIScreen *screen = [UIScreen mainScreen];
+    screen = [UIScreen mainScreen];
     NSLayoutConstraint *searchFieldWidth = [NSLayoutConstraint constraintWithItem:searchField attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:screen.bounds.size.width - 46];
     NSLayoutConstraint *searchFieldHeight = [NSLayoutConstraint constraintWithItem:searchField attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:40];
     [self.view addConstraints:@[searchFieldCenterX,searchFieldTop,searchFieldWidth,searchFieldHeight]];
@@ -144,6 +145,7 @@
                     NSLayoutConstraint *autoCompleteTableViewWidth = [NSLayoutConstraint constraintWithItem:autoCompleteTableView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:searchField attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0];
                     NSLayoutConstraint *autoCompleteTableViewHeight = [NSLayoutConstraint constraintWithItem:autoCompleteTableView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:200];
                     [self.view addConstraints:@[autoCompleteTableViewTop,autoCompleteTableViewLeading,autoCompleteTableViewWidth,autoCompleteTableViewHeight]];
+                    
                 }
             }
         }
@@ -179,7 +181,7 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifer];
         }
         cell.textLabel.text = @"dskahdkjsahdkjsahkdjshakjdhsa";
-        cell.textLabel.textColor = [UIColor yellowColor];
+        cell.textLabel.textColor = [UIColor blueColor];
         return cell;
     }
 }
@@ -214,16 +216,14 @@
         
     } completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
         [autoCompleteTableView removeFromSuperview];
-        resultTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        [resultTableView removeFromSuperview];
+        resultTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, screen.bounds.size.height, screen.bounds.size.width, 200) style:UITableViewStylePlain];
         [self.view addSubview:resultTableView];
-        resultTableView.translatesAutoresizingMaskIntoConstraints = NO;
         resultTableView.delegate = self;
         resultTableView.dataSource = self;
-        NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:resultTableView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
-        NSLayoutConstraint *leading = [NSLayoutConstraint constraintWithItem:resultTableView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0];
-        NSLayoutConstraint *width = [NSLayoutConstraint constraintWithItem:resultTableView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeWidth multiplier:1.0 constant:0];
-        NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:resultTableView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:200];
-        [self.view addConstraints:@[bottom,leading,width,height]];
+        [UIView animateWithDuration:0.3 animations:^{
+            resultTableView.frame = CGRectMake(0, screen.bounds.size.height - 200, screen.bounds.size.width, 200);
+        }];
     }];
     [dataTask resume];
 }
