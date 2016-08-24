@@ -180,7 +180,7 @@
         if (!cell) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifer];
         }
-        cell.textLabel.text = @"dskahdkjsahdkjsahkdjshakjdhsa";
+        cell.textLabel.text = @"new place in the earth";
         cell.textLabel.textColor = [UIColor blueColor];
         return cell;
     }
