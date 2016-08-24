@@ -239,26 +239,26 @@
 #pragma mark touch event
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
 {
-    NSLog(@"touchesBegan");
+    NSLog(@"touchesBegan touches is %@",touches);
 }
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
 {
-    NSLog(@"touchesMoved");
+    NSLog(@"touchesMoved touches is %@",touches);
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
 {
-    NSLog(@"touchesEnded");
+    NSLog(@"touchesEnded touches is %@",touches);
 }
 
 - (void)touchesCancelled:(nullable NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
 {
-    NSLog(@"touchesCancelled");
+    NSLog(@"touchesCancelled touches is %@",touches);
 }
 
 - (void)touchesEstimatedPropertiesUpdated:(NSSet * _Nonnull)touches
 {
-    NSLog(@"touchesEstimatedPropertiesUpdated");
+    NSLog(@"touchesEstimatedPropertiesUpdated touches is %@",touches);
 }
 @end
