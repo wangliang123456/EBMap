@@ -235,4 +235,30 @@
 {
     currentLotion = newLocation;
 }
+
+#pragma mark touch event
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
+{
+    NSLog(@"touchesBegan");
+}
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
+{
+    NSLog(@"touchesMoved");
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
+{
+    NSLog(@"touchesEnded");
+}
+
+- (void)touchesCancelled:(nullable NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
+{
+    NSLog(@"touchesCancelled");
+}
+
+- (void)touchesEstimatedPropertiesUpdated:(NSSet * _Nonnull)touches
+{
+    NSLog(@"touchesEstimatedPropertiesUpdated");
+}
 @end
